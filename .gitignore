@@ -1,2 +1,6 @@
 # Ignorar CSVs brutos locais (versões compactadas .csv.gz são versionadas no Git)
 dataset/*.csv
+data/raw/*.csv
+data/raw/*.csv.gz
+data/processed/*.csv
+data/processed/*.csv.gz
