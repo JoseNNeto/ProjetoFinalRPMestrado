@@ -1,0 +1,2 @@
+# Ignorar CSVs brutos locais (versões compactadas .csv.gz são versionadas no Git)
+dataset/*.csv
