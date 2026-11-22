@@ -1,0 +1,60 @@
+dataset,model,fold,f1_macro,balanced_accuracy,fit_time
+01_card_transdata,SVM,1,0.974353,0.96452,3.866
+01_card_transdata,KNN,1,0.977911,0.975434,0.0553
+01_card_transdata,Random Forest,1,0.997636,0.995702,0.3325
+01_card_transdata,MLP,1,0.99209,0.988265,6.0033
+01_card_transdata,Hibrido (Stacking),1,0.995267,0.9927,14.8191
+01_card_transdata,SVM,2,0.969705,0.962403,4.0559
+01_card_transdata,KNN,2,0.980148,0.974549,0.0392
+01_card_transdata,Random Forest,2,0.997636,0.995702,0.3574
+01_card_transdata,MLP,2,0.990607,0.991878,6.2587
+01_card_transdata,Hibrido (Stacking),2,0.996071,0.995428,12.2234
+01_card_transdata,SVM,3,0.971224,0.961487,4.1477
+01_card_transdata,KNN,3,0.974886,0.973659,0.0487
+01_card_transdata,Random Forest,3,0.994471,0.99,0.4318
+01_card_transdata,MLP,3,0.985069,0.98319,7.5142
+01_card_transdata,Hibrido (Stacking),3,0.994471,0.99,13.1739
+01_card_transdata,SVM,4,0.967596,0.951898,3.6795
+01_card_transdata,KNN,4,0.980096,0.972035,0.049
+01_card_transdata,Random Forest,4,0.995267,0.991429,0.4023
+01_card_transdata,MLP,4,0.984425,0.986928,5.5482
+01_card_transdata,Hibrido (Stacking),4,0.99209,0.987006,11.7379
+01_card_transdata,SVM,5,0.979162,0.968023,3.7505
+01_card_transdata,KNN,5,0.980303,0.977202,0.0525
+01_card_transdata,Random Forest,5,0.997643,0.995714,0.336
+01_card_transdata,MLP,5,0.993738,0.993738,4.7767
+01_card_transdata,Hibrido (Stacking),5,0.995267,0.991429,6.3323
+02_smoking_drinking,SVM,1,0.726654,0.72676,71.8912
+02_smoking_drinking,KNN,1,0.677979,0.678004,0.0984
+02_smoking_drinking,Random Forest,1,0.724249,0.724251,0.8494
+02_smoking_drinking,MLP,1,0.739977,0.740005,6.3852
+02_smoking_drinking,Hibrido (Stacking),1,0.726547,0.726764,343.1268
+02_smoking_drinking,SVM,2,0.728817,0.729013,142.1658
+02_smoking_drinking,KNN,2,0.683156,0.683259,0.0933
+02_smoking_drinking,Random Forest,2,0.725709,0.725756,0.7542
+02_smoking_drinking,MLP,2,0.725769,0.726015,6.0379
+02_smoking_drinking,Hibrido (Stacking),2,0.726164,0.726773,175.9381
+02_smoking_drinking,SVM,3,0.726202,0.726257,99.2261
+02_smoking_drinking,KNN,3,0.684541,0.684763,0.0746
+02_smoking_drinking,Random Forest,3,0.725978,0.726005,0.4299
+02_smoking_drinking,MLP,3,0.739987,0.739997,3.453
+02_smoking_drinking,Hibrido (Stacking),3,0.730487,0.730766,134.7647
+02_smoking_drinking,SVM,4,0.726709,0.726756,44.2927
+02_smoking_drinking,KNN,4,0.686992,0.687003,0.0272
+02_smoking_drinking,Random Forest,4,0.723486,0.723504,0.3578
+02_smoking_drinking,MLP,4,0.731993,0.732003,2.15
+02_smoking_drinking,Hibrido (Stacking),4,0.728245,0.728252,2854.0738
+02_smoking_drinking,SVM,5,0.733661,0.73375,132.2637
+02_smoking_drinking,KNN,5,0.686955,0.687,0.0945
+02_smoking_drinking,Random Forest,5,0.729947,0.73,0.7195
+02_smoking_drinking,MLP,5,0.736956,0.737,7.1456
+02_smoking_drinking,Hibrido (Stacking),5,0.735577,0.736,228.7853
+03_flight_delay,SVM,1,0.491859,0.521451,290.8466
+03_flight_delay,KNN,1,0.553904,0.551693,0.1082
+03_flight_delay,Random Forest,1,0.565891,0.561825,0.8669
+03_flight_delay,MLP,1,0.554221,0.554668,6.8225
+03_flight_delay,Hibrido (Stacking),1,0.564016,0.561073,468.1385
+03_flight_delay,SVM,2,0.498675,0.524842,1127.1522
+03_flight_delay,KNN,2,0.55822,0.55464,0.0281
+03_flight_delay,Random Forest,2,0.562938,0.559631,0.346
+03_flight_delay,MLP,2,0.550279,0.552386,1.6476
