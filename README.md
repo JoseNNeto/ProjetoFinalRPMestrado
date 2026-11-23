@@ -2,6 +2,8 @@
 
 Este repositório contém o protocolo experimental, o pipeline de pré-processamento, os algoritmos de classificação (incluindo o sistema híbrido proposto) e os scripts de validação estatística desenvolvidos para a disciplina de **Reconhecimento de Padrões** (Mestrado em Engenharia da Computação).
 
+[Guia do modelo híbrido com PSO](docs/README_MODELO_HIBRIDO.md) · [Perguntas para a apresentação](docs/README_PERGUNTAS_PROFESSOR.md)
+
 ---
 
 ## 📋 Requisitos do Projeto (Classroom)
