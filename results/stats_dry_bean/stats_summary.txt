@@ -1,0 +1,28 @@
+=== Análise Estatística: Teste de Friedman + Pós-teste de Nemenyi ===
+Protocolo              : dry-bean
+CSV de entrada         : C:\Users\User\Downloads\Mestrado\2026.2\reconhecimento\ProjetoFinalRPMestrado\results\metrics_raw_dry_bean.csv
+Métrica avaliada       : f1_macro
+Bases (N)              : 10
+Modelos (k)            : 6
+Nível de significância : alpha = 0.05
+Estatística Friedman χ²: 15.085714
+p-valor (Friedman)     : 1.000230e-02
+Decisão (α=0.05)      : Rejeita-se H0 (há diferença estatisticamente significativa entre os modelos).
+Diferença Crítica (CD) : 2.3842
+
+--- Ranks Médios (1 = melhor) ---
+  Hibrido (PSO Adaptativo): 2.2000
+  MLP                 : 2.8000
+  Random Forest       : 2.8000
+  Hibrido (Stacking)  : 4.1000
+  SVM                 : 4.4000
+  KNN                 : 4.7000
+
+--- Matriz de p-valores (Nemenyi) ---
+                          Hibrido (PSO Adaptativo)  Hibrido (Stacking)       KNN       MLP  Random Forest       SVM
+Hibrido (PSO Adaptativo)                  1.000000            0.205990  0.033452  0.979939       0.979939  0.090215
+Hibrido (Stacking)                        0.205990            1.000000  0.979939  0.629168       0.629168  0.999227
+KNN                                       0.033452            0.979939  1.000000  0.205990       0.205990  0.999227
+MLP                                       0.979939            0.629168  0.205990  1.000000       1.000000  0.394405
+Random Forest                             0.979939            0.629168  0.205990  1.000000       1.000000  0.394405
+SVM                                       0.090215            0.999227  0.999227  0.394405       0.394405  1.000000

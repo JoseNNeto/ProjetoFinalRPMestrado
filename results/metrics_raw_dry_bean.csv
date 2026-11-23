@@ -1,0 +1,301 @@
+dataset,model,fold,f1_macro,balanced_accuracy,fit_time
+01_card_transdata,SVM,1,0.974353,0.96452,3.2273
+01_card_transdata,KNN,1,0.977911,0.975434,0.0322
+01_card_transdata,Random Forest,1,0.997636,0.995702,0.2683
+01_card_transdata,MLP,1,0.99209,0.988265,3.9103
+01_card_transdata,Hibrido (Stacking),1,0.995267,0.9927,9.6896
+01_card_transdata,Hibrido (PSO Adaptativo),1,0.996844,0.994269,12.6477
+01_card_transdata,SVM,2,0.969705,0.962403,3.1955
+01_card_transdata,KNN,2,0.980148,0.974549,0.0283
+01_card_transdata,Random Forest,2,0.997636,0.995702,0.2752
+01_card_transdata,MLP,2,0.990607,0.991878,3.7733
+01_card_transdata,Hibrido (Stacking),2,0.996071,0.995428,8.8504
+01_card_transdata,Hibrido (PSO Adaptativo),2,0.997636,0.995702,12.4955
+01_card_transdata,SVM,3,0.971224,0.961487,3.206
+01_card_transdata,KNN,3,0.974886,0.973659,0.0283
+01_card_transdata,Random Forest,3,0.994471,0.99,0.2337
+01_card_transdata,MLP,3,0.985069,0.98319,4.394
+01_card_transdata,Hibrido (Stacking),3,0.993672,0.988571,6.01
+01_card_transdata,Hibrido (PSO Adaptativo),3,0.994471,0.99,12.3877
+01_card_transdata,SVM,4,0.967596,0.951898,3.0888
+01_card_transdata,KNN,4,0.980096,0.972035,0.0483
+01_card_transdata,Random Forest,4,0.995267,0.991429,0.4467
+01_card_transdata,MLP,4,0.984425,0.986928,3.6542
+01_card_transdata,Hibrido (Stacking),4,0.99209,0.987006,6.2349
+01_card_transdata,Hibrido (PSO Adaptativo),4,0.995267,0.991429,12.777
+01_card_transdata,SVM,5,0.979162,0.968023,3.2697
+01_card_transdata,KNN,5,0.980303,0.977202,0.0289
+01_card_transdata,Random Forest,5,0.997643,0.995714,0.2807
+01_card_transdata,MLP,5,0.993738,0.993738,3.3138
+01_card_transdata,Hibrido (Stacking),5,0.995267,0.991429,6.286
+01_card_transdata,Hibrido (PSO Adaptativo),5,0.997643,0.995714,13.0963
+02_smoking_drinking,SVM,1,0.726654,0.72676,55.6589
+02_smoking_drinking,KNN,1,0.677979,0.678004,0.0435
+02_smoking_drinking,Random Forest,1,0.724249,0.724251,0.4749
+02_smoking_drinking,MLP,1,0.739977,0.740005,2.1939
+02_smoking_drinking,Hibrido (Stacking),1,0.726039,0.726264,98.151
+02_smoking_drinking,Hibrido (PSO Adaptativo),1,0.728691,0.728758,148.329
+02_smoking_drinking,SVM,2,0.728817,0.729013,63.6258
+02_smoking_drinking,KNN,2,0.683156,0.683259,0.0581
+02_smoking_drinking,Random Forest,2,0.725709,0.725756,0.5785
+02_smoking_drinking,MLP,2,0.725769,0.726015,2.1881
+02_smoking_drinking,Hibrido (Stacking),2,0.72565,0.726274,116.1342
+02_smoking_drinking,Hibrido (PSO Adaptativo),2,0.732893,0.73301,164.087
+02_smoking_drinking,SVM,3,0.726202,0.726257,60.5687
+02_smoking_drinking,KNN,3,0.684541,0.684763,0.0437
+02_smoking_drinking,Random Forest,3,0.725978,0.726005,0.4866
+02_smoking_drinking,MLP,3,0.739987,0.739997,2.3071
+02_smoking_drinking,Hibrido (Stacking),3,0.733124,0.733261,114.0903
+02_smoking_drinking,Hibrido (PSO Adaptativo),3,0.731713,0.731756,159.4111
+02_smoking_drinking,SVM,4,0.726709,0.726756,58.5245
+02_smoking_drinking,KNN,4,0.686992,0.687003,0.0501
+02_smoking_drinking,Random Forest,4,0.723486,0.723504,0.5815
+02_smoking_drinking,MLP,4,0.731993,0.732003,2.8853
+02_smoking_drinking,Hibrido (Stacking),4,0.727247,0.727249,101.1177
+02_smoking_drinking,Hibrido (PSO Adaptativo),4,0.727461,0.727506,157.0404
+02_smoking_drinking,SVM,5,0.733661,0.73375,57.8325
+02_smoking_drinking,KNN,5,0.686955,0.687,0.0414
+02_smoking_drinking,Random Forest,5,0.729947,0.73,0.4623
+02_smoking_drinking,MLP,5,0.736956,0.737,2.5287
+02_smoking_drinking,Hibrido (Stacking),5,0.735577,0.736,99.8329
+02_smoking_drinking,Hibrido (PSO Adaptativo),5,0.73494,0.735,148.68
+03_flight_delay,SVM,1,0.491859,0.521451,132.6149
+03_flight_delay,KNN,1,0.553904,0.551693,0.0407
+03_flight_delay,Random Forest,1,0.565891,0.561825,0.5822
+03_flight_delay,MLP,1,0.554221,0.554668,2.4963
+03_flight_delay,Hibrido (Stacking),1,0.56382,0.561051,214.0764
+03_flight_delay,Hibrido (PSO Adaptativo),1,0.566897,0.562601,290.7144
+03_flight_delay,SVM,2,0.498675,0.524842,121.4424
+03_flight_delay,KNN,2,0.55822,0.55464,0.0423
+03_flight_delay,Random Forest,2,0.562938,0.559631,0.5685
+03_flight_delay,MLP,2,0.550279,0.552386,2.2409
+03_flight_delay,Hibrido (Stacking),2,0.530113,0.540885,193.4372
+03_flight_delay,Hibrido (PSO Adaptativo),2,0.559759,0.556126,270.5124
+03_flight_delay,SVM,3,0.491597,0.521141,122.6161
+03_flight_delay,KNN,3,0.553016,0.550183,0.0403
+03_flight_delay,Random Forest,3,0.565714,0.561292,0.5541
+03_flight_delay,MLP,3,0.569072,0.563797,2.4396
+03_flight_delay,Hibrido (Stacking),3,0.519119,0.534902,192.3623
+03_flight_delay,Hibrido (PSO Adaptativo),3,0.559434,0.555704,271.9269
+03_flight_delay,SVM,4,0.486005,0.518548,123.1338
+03_flight_delay,KNN,4,0.558716,0.554972,0.0414
+03_flight_delay,Random Forest,4,0.561223,0.558634,0.5815
+03_flight_delay,MLP,4,0.5312,0.541528,2.4478
+03_flight_delay,Hibrido (Stacking),4,0.558406,0.557527,192.8517
+03_flight_delay,Hibrido (PSO Adaptativo),4,0.563928,0.560407,279.3125
+03_flight_delay,SVM,5,0.484773,0.518035,135.4364
+03_flight_delay,KNN,5,0.545972,0.546119,0.0453
+03_flight_delay,Random Forest,5,0.54363,0.547294,0.7341
+03_flight_delay,MLP,5,0.547278,0.550823,2.8767
+03_flight_delay,Hibrido (Stacking),5,0.54765,0.551133,213.7777
+03_flight_delay,Hibrido (PSO Adaptativo),5,0.548348,0.549366,306.5913
+04_dry_bean,SVM,1,0.93059,0.928118,2.9632
+04_dry_bean,KNN,1,0.928053,0.926245,0.0205
+04_dry_bean,Random Forest,1,0.927314,0.924672,0.63
+04_dry_bean,MLP,1,0.930315,0.928203,1.9733
+04_dry_bean,Hibrido (Stacking),1,0.804714,0.804079,11.8919
+04_dry_bean,Hibrido (PSO Adaptativo),1,0.930561,0.928959,17.7791
+04_dry_bean,SVM,2,0.93879,0.936545,3.0812
+04_dry_bean,KNN,2,0.938824,0.93635,0.0212
+04_dry_bean,Random Forest,2,0.939214,0.937393,0.5785
+04_dry_bean,MLP,2,0.943132,0.939592,2.4585
+04_dry_bean,Hibrido (Stacking),2,0.799021,0.812887,10.8411
+04_dry_bean,Hibrido (PSO Adaptativo),2,0.941123,0.93855,18.9712
+04_dry_bean,SVM,3,0.945098,0.944661,4.1988
+04_dry_bean,KNN,3,0.939154,0.939224,0.0291
+04_dry_bean,Random Forest,3,0.93551,0.935562,0.7055
+04_dry_bean,MLP,3,0.94287,0.943666,3.3806
+04_dry_bean,Hibrido (Stacking),3,0.818091,0.83019,8.4861
+04_dry_bean,Hibrido (PSO Adaptativo),3,0.943055,0.942839,18.9921
+04_dry_bean,SVM,4,0.948765,0.947213,3.1719
+04_dry_bean,KNN,4,0.941591,0.938997,0.0212
+04_dry_bean,Random Forest,4,0.939805,0.937772,0.7698
+04_dry_bean,MLP,4,0.947737,0.946332,2.417
+04_dry_bean,Hibrido (Stacking),4,0.820658,0.830648,8.3264
+04_dry_bean,Hibrido (PSO Adaptativo),4,0.943187,0.940794,18.8444
+04_dry_bean,SVM,5,0.935863,0.934376,3.3183
+04_dry_bean,KNN,5,0.928286,0.927105,0.0261
+04_dry_bean,Random Forest,5,0.932761,0.931381,0.6491
+04_dry_bean,MLP,5,0.934564,0.935673,3.0833
+04_dry_bean,Hibrido (Stacking),5,0.83084,0.834597,8.6648
+04_dry_bean,Hibrido (PSO Adaptativo),5,0.929909,0.928625,18.948
+05_nasa_neo,SVM,1,0.580179,0.56227,19.4065
+05_nasa_neo,KNN,1,0.64311,0.623782,0.0219
+05_nasa_neo,Random Forest,1,0.675446,0.650486,0.3695
+05_nasa_neo,MLP,1,0.603704,0.578055,3.3351
+05_nasa_neo,Hibrido (Stacking),1,0.637402,0.606472,33.9996
+05_nasa_neo,Hibrido (PSO Adaptativo),1,0.674115,0.649362,52.4883
+05_nasa_neo,SVM,2,0.555944,0.547421,18.846
+05_nasa_neo,KNN,2,0.638673,0.618352,0.0211
+05_nasa_neo,Random Forest,2,0.666573,0.637688,0.3283
+05_nasa_neo,MLP,2,0.599769,0.576313,2.2575
+05_nasa_neo,Hibrido (Stacking),2,0.606237,0.580665,31.5091
+05_nasa_neo,Hibrido (PSO Adaptativo),2,0.667316,0.638525,53.2909
+05_nasa_neo,SVM,3,0.561066,0.550506,18.8757
+05_nasa_neo,KNN,3,0.632602,0.614386,0.022
+05_nasa_neo,Random Forest,3,0.675008,0.648691,0.3369
+05_nasa_neo,MLP,3,0.581462,0.563228,3.6658
+05_nasa_neo,Hibrido (Stacking),3,0.624319,0.594224,31.1907
+05_nasa_neo,Hibrido (PSO Adaptativo),3,0.673987,0.647711,51.5026
+05_nasa_neo,SVM,4,0.575218,0.559208,19.2036
+05_nasa_neo,KNN,4,0.650961,0.632263,0.0232
+05_nasa_neo,Random Forest,4,0.690695,0.664009,0.3709
+05_nasa_neo,MLP,4,0.620189,0.590158,2.1997
+05_nasa_neo,Hibrido (Stacking),4,0.639987,0.605908,31.9252
+05_nasa_neo,Hibrido (PSO Adaptativo),4,0.691979,0.665679,53.7888
+05_nasa_neo,SVM,5,0.573891,0.558372,20.1181
+05_nasa_neo,KNN,5,0.631106,0.612169,0.0224
+05_nasa_neo,Random Forest,5,0.692249,0.661291,0.3924
+05_nasa_neo,MLP,5,0.614074,0.585958,3.9922
+05_nasa_neo,Hibrido (Stacking),5,0.631483,0.59894,32.4823
+05_nasa_neo,Hibrido (PSO Adaptativo),5,0.692914,0.662126,52.375
+06_sdss_dr16,SVM,1,0.895149,0.876964,16.3766
+06_sdss_dr16,KNN,1,0.919196,0.900136,0.0311
+06_sdss_dr16,Random Forest,1,0.963226,0.952075,0.4702
+06_sdss_dr16,MLP,1,0.959356,0.948784,8.7514
+06_sdss_dr16,Hibrido (Stacking),1,0.962905,0.953429,28.9466
+06_sdss_dr16,Hibrido (PSO Adaptativo),1,0.9635,0.952507,53.0947
+06_sdss_dr16,SVM,2,0.893694,0.875683,16.4167
+06_sdss_dr16,KNN,2,0.915288,0.892521,0.0284
+06_sdss_dr16,Random Forest,2,0.965828,0.950977,0.4604
+06_sdss_dr16,MLP,2,0.932334,0.908326,4.7418
+06_sdss_dr16,Hibrido (Stacking),2,0.964247,0.949146,29.1641
+06_sdss_dr16,Hibrido (PSO Adaptativo),2,0.966378,0.951834,53.1297
+06_sdss_dr16,SVM,3,0.894689,0.879256,16.757
+06_sdss_dr16,KNN,3,0.918096,0.896059,0.0309
+06_sdss_dr16,Random Forest,3,0.966462,0.955724,0.6239
+06_sdss_dr16,MLP,3,0.93447,0.907204,4.4015
+06_sdss_dr16,Hibrido (Stacking),3,0.960445,0.948417,29.7346
+06_sdss_dr16,Hibrido (PSO Adaptativo),3,0.965221,0.954015,52.8278
+06_sdss_dr16,SVM,4,0.899391,0.883229,16.4241
+06_sdss_dr16,KNN,4,0.922044,0.901225,0.0313
+06_sdss_dr16,Random Forest,4,0.96549,0.953207,0.4724
+06_sdss_dr16,MLP,4,0.93233,0.909214,2.4919
+06_sdss_dr16,Hibrido (Stacking),4,0.963958,0.954212,28.7362
+06_sdss_dr16,Hibrido (PSO Adaptativo),4,0.967257,0.954414,53.4849
+06_sdss_dr16,SVM,5,0.894658,0.876091,16.2387
+06_sdss_dr16,KNN,5,0.915999,0.895272,0.0289
+06_sdss_dr16,Random Forest,5,0.963543,0.957959,0.453
+06_sdss_dr16,MLP,5,0.948116,0.929299,7.2259
+06_sdss_dr16,Hibrido (Stacking),5,0.961905,0.957184,28.2502
+06_sdss_dr16,Hibrido (PSO Adaptativo),5,0.963008,0.957104,52.9467
+07_ai4i_2020,SVM,1,0.693487,0.626607,1.1162
+07_ai4i_2020,KNN,1,0.741145,0.677552,0.0228
+07_ai4i_2020,Random Forest,1,0.828708,0.767363,0.2361
+07_ai4i_2020,MLP,1,0.7613,0.699682,1.5205
+07_ai4i_2020,Hibrido (Stacking),1,0.491482,0.5,2.1859
+07_ai4i_2020,Hibrido (PSO Adaptativo),1,0.741145,0.677552,5.5715
+07_ai4i_2020,SVM,2,0.691032,0.624741,1.0895
+07_ai4i_2020,KNN,2,0.71928,0.653377,0.0209
+07_ai4i_2020,Random Forest,2,0.841556,0.771541,0.2155
+07_ai4i_2020,MLP,2,0.839363,0.805718,3.8671
+07_ai4i_2020,Hibrido (Stacking),2,0.491353,0.5,2.2998
+07_ai4i_2020,Hibrido (PSO Adaptativo),2,0.727642,0.66073,5.5782
+07_ai4i_2020,SVM,3,0.68398,0.623965,1.1126
+07_ai4i_2020,KNN,3,0.672488,0.616353,0.0295
+07_ai4i_2020,Random Forest,3,0.838225,0.771282,0.2659
+07_ai4i_2020,MLP,3,0.781127,0.725612,1.4408
+07_ai4i_2020,Hibrido (Stacking),3,0.491353,0.5,2.2706
+07_ai4i_2020,Hibrido (PSO Adaptativo),3,0.690767,0.631059,5.5376
+07_ai4i_2020,SVM,4,0.738536,0.668341,1.1077
+07_ai4i_2020,KNN,4,0.748951,0.68253,0.0222
+07_ai4i_2020,Random Forest,4,0.840193,0.792047,0.2911
+07_ai4i_2020,MLP,4,0.74804,0.695683,0.9811
+07_ai4i_2020,Hibrido (Stacking),4,0.491353,0.5,2.3371
+07_ai4i_2020,Hibrido (PSO Adaptativo),4,0.756602,0.689882,5.6538
+07_ai4i_2020,SVM,5,0.693487,0.625,1.108
+07_ai4i_2020,KNN,5,0.741145,0.675177,0.0234
+07_ai4i_2020,Random Forest,5,0.808851,0.734777,0.2382
+07_ai4i_2020,MLP,5,0.791512,0.740059,1.5732
+07_ai4i_2020,Hibrido (Stacking),5,0.491353,0.5,2.3348
+07_ai4i_2020,Hibrido (PSO Adaptativo),5,0.753846,0.689624,5.598
+08_electrical_grid,SVM,1,0.950056,0.948713,4.5182
+08_electrical_grid,KNN,1,0.832898,0.82047,0.0211
+08_electrical_grid,Random Forest,1,0.908688,0.904685,0.384
+08_electrical_grid,MLP,1,0.955988,0.954219,2.1941
+08_electrical_grid,Hibrido (Stacking),1,0.951729,0.950785,8.3838
+08_electrical_grid,Hibrido (PSO Adaptativo),1,0.949498,0.948023,17.7033
+08_electrical_grid,SVM,2,0.952814,0.951867,4.4573
+08_electrical_grid,KNN,2,0.820405,0.809871,0.0206
+08_electrical_grid,Random Forest,2,0.903878,0.898264,0.3495
+08_electrical_grid,MLP,2,0.954287,0.951848,2.4121
+08_electrical_grid,Hibrido (Stacking),2,0.954482,0.953939,8.3353
+08_electrical_grid,Hibrido (PSO Adaptativo),2,0.958187,0.956682,17.1848
+08_electrical_grid,SVM,3,0.950177,0.949908,4.3599
+08_electrical_grid,KNN,3,0.837674,0.826201,0.0218
+08_electrical_grid,Random Forest,3,0.912203,0.906831,0.3251
+08_electrical_grid,MLP,3,0.954427,0.953342,2.2598
+08_electrical_grid,Hibrido (Stacking),3,0.951368,0.9472,7.6666
+08_electrical_grid,Hibrido (PSO Adaptativo),3,0.955091,0.955227,17.3404
+08_electrical_grid,SVM,4,0.955795,0.952127,4.3912
+08_electrical_grid,KNN,4,0.848404,0.834728,0.0224
+08_electrical_grid,Random Forest,4,0.916672,0.909162,0.3232
+08_electrical_grid,MLP,4,0.962091,0.961815,2.673
+08_electrical_grid,Hibrido (Stacking),4,0.955711,0.951231,7.8758
+08_electrical_grid,Hibrido (PSO Adaptativo),4,0.959653,0.956364,17.5366
+08_electrical_grid,SVM,5,0.955118,0.955526,4.3769
+08_electrical_grid,KNN,5,0.839958,0.831074,0.023
+08_electrical_grid,Random Forest,5,0.911101,0.908045,0.3264
+08_electrical_grid,MLP,5,0.964279,0.964279,2.2281
+08_electrical_grid,Hibrido (Stacking),5,0.953842,0.952352,7.8535
+08_electrical_grid,Hibrido (PSO Adaptativo),5,0.954009,0.954145,17.3739
+09_steel_plates_faults,SVM,1,0.762032,0.729075,0.4167
+09_steel_plates_faults,KNN,1,0.767951,0.769078,0.0083
+09_steel_plates_faults,Random Forest,1,0.778866,0.746231,0.2171
+09_steel_plates_faults,MLP,1,0.74851,0.712441,0.5185
+09_steel_plates_faults,Hibrido (Stacking),1,0.761999,0.726157,1.4545
+09_steel_plates_faults,Hibrido (PSO Adaptativo),1,0.789097,0.76797,2.9008
+09_steel_plates_faults,SVM,2,0.752639,0.731193,0.4295
+09_steel_plates_faults,KNN,2,0.720657,0.721779,0.0109
+09_steel_plates_faults,Random Forest,2,0.800534,0.778082,0.2419
+09_steel_plates_faults,MLP,2,0.733794,0.716584,0.3684
+09_steel_plates_faults,Hibrido (Stacking),2,0.759994,0.729781,1.4521
+09_steel_plates_faults,Hibrido (PSO Adaptativo),2,0.757298,0.744377,3.0438
+09_steel_plates_faults,SVM,3,0.760896,0.754713,0.4167
+09_steel_plates_faults,KNN,3,0.732759,0.740318,0.0082
+09_steel_plates_faults,Random Forest,3,0.800779,0.781648,0.2505
+09_steel_plates_faults,MLP,3,0.771518,0.787933,0.7546
+09_steel_plates_faults,Hibrido (Stacking),3,0.727611,0.686327,1.415
+09_steel_plates_faults,Hibrido (PSO Adaptativo),3,0.771103,0.76998,2.9169
+09_steel_plates_faults,SVM,4,0.775912,0.758979,0.4721
+09_steel_plates_faults,KNN,4,0.755063,0.77303,0.0154
+09_steel_plates_faults,Random Forest,4,0.797682,0.782224,0.2558
+09_steel_plates_faults,MLP,4,0.73556,0.729202,0.3884
+09_steel_plates_faults,Hibrido (Stacking),4,0.524233,0.53664,1.4019
+09_steel_plates_faults,Hibrido (PSO Adaptativo),4,0.793288,0.782286,2.9132
+09_steel_plates_faults,SVM,5,0.761245,0.747183,0.4328
+09_steel_plates_faults,KNN,5,0.734545,0.739071,0.0129
+09_steel_plates_faults,Random Forest,5,0.786696,0.770006,0.2675
+09_steel_plates_faults,MLP,5,0.747484,0.742319,0.4572
+09_steel_plates_faults,Hibrido (Stacking),5,0.720407,0.687652,1.5248
+09_steel_plates_faults,Hibrido (PSO Adaptativo),5,0.771278,0.758705,3.0675
+10_telco_churn,SVM,1,0.734565,0.719295,5.835
+10_telco_churn,KNN,1,0.702215,0.699668,0.0333
+10_telco_churn,Random Forest,1,0.72809,0.715318,0.2597
+10_telco_churn,MLP,1,0.741163,0.727204,0.8887
+10_telco_churn,Hibrido (Stacking),1,0.73921,0.723418,9.2333
+10_telco_churn,Hibrido (PSO Adaptativo),1,0.725309,0.713386,16.3829
+10_telco_churn,SVM,2,0.708606,0.693669,5.4935
+10_telco_churn,KNN,2,0.699841,0.699331,0.0332
+10_telco_churn,Random Forest,2,0.711386,0.699051,0.2421
+10_telco_churn,MLP,2,0.736691,0.726642,0.8187
+10_telco_churn,Hibrido (Stacking),2,0.718645,0.702399,9.0876
+10_telco_churn,Hibrido (PSO Adaptativo),2,0.70854,0.69404,16.1366
+10_telco_churn,SVM,3,0.748376,0.726137,5.7815
+10_telco_churn,KNN,3,0.700243,0.698219,0.0331
+10_telco_churn,Random Forest,3,0.714119,0.700983,0.2448
+10_telco_churn,MLP,3,0.728715,0.708421,1.2084
+10_telco_churn,Hibrido (Stacking),3,0.742966,0.725463,9.548
+10_telco_churn,Hibrido (PSO Adaptativo),3,0.729101,0.710016,16.2095
+10_telco_churn,SVM,4,0.676342,0.662038,5.489
+10_telco_churn,KNN,4,0.672776,0.66962,0.0335
+10_telco_churn,Random Forest,4,0.685222,0.670564,0.2487
+10_telco_churn,MLP,4,0.692611,0.676252,0.9069
+10_telco_churn,Hibrido (Stacking),4,0.680228,0.664562,8.7196
+10_telco_churn,Hibrido (PSO Adaptativo),4,0.679901,0.666325,15.6538
+10_telco_churn,SVM,5,0.708774,0.692144,5.6588
+10_telco_churn,KNN,5,0.673365,0.670213,0.0339
+10_telco_churn,Random Forest,5,0.686662,0.674337,0.2606
+10_telco_churn,MLP,5,0.70749,0.690437,0.8031
+10_telco_churn,Hibrido (Stacking),5,0.703441,0.686796,9.0802
+10_telco_churn,Hibrido (PSO Adaptativo),5,0.700787,0.681904,24.1797

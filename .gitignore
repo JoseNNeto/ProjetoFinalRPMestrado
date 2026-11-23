@@ -4,3 +4,6 @@ data/raw/*.csv
 data/raw/*.csv.gz
 data/processed/*.csv
 data/processed/*.csv.gz
+
+__pycache__/
+*.pyc
