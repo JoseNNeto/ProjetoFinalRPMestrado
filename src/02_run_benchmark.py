@@ -2,7 +2,7 @@
 
 Lê as bases preparadas em ``data/processed/*.csv.gz`` e executa os 6 modelos sobre
 ``StratifiedKFold(n_splits=5, shuffle=True, random_state=42)`` e grava
-``results/metrics_raw_refactored.csv`` com ``f1_macro``, ``balanced_accuracy`` e ``fit_time``.
+``results/metrics_raw_dry_bean.csv`` com ``f1_macro``, ``balanced_accuracy`` e ``fit_time``.
 """
 
 from __future__ import annotations
@@ -44,7 +44,7 @@ MODEL_NAMES = {
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 RESULTS_DIR = PROJECT_ROOT / "results"
-METRICS_PATH = RESULTS_DIR / "metrics_raw_refactored.csv"
+METRICS_PATH = RESULTS_DIR / "metrics_raw_dry_bean.csv"
 
 
 def build_preprocessor(X: pd.DataFrame) -> ColumnTransformer:
@@ -148,7 +148,11 @@ def run_benchmark(
     metrics_path = (Path(results_path) if results_path is not None else METRICS_PATH).resolve()
     cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=RANDOM_STATE)
 
-    dataset_paths = {path.name[:-7]: path for path in sorted(PROCESSED_DIR.glob("*.csv.gz"))}
+    # Ignora a EMG preparada por versões anteriores sem apagar o arquivo histórico.
+    dataset_paths = {
+        path.name[:-7]: path for path in sorted(PROCESSED_DIR.glob("*.csv.gz"))
+        if path.name != "04_emg_gesture.csv.gz"
+    }
     if not dataset_paths:
         raise FileNotFoundError(
             f"Nenhum arquivo .csv.gz encontrado em {PROCESSED_DIR}. "
@@ -243,7 +247,7 @@ def parse_args() -> argparse.Namespace:
         "--results-path",
         type=Path,
         default=METRICS_PATH,
-        help="CSV de saída (padrão: results/metrics_raw_refactored.csv).",
+        help=f"CSV de saída (padrão: results/{METRICS_PATH.name}).",
     )
     parser.add_argument(
         "--resume",

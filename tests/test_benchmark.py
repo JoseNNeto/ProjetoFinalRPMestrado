@@ -15,6 +15,7 @@ from sklearn.model_selection import StratifiedKFold
 
 
 benchmark = import_module("src.02_run_benchmark")
+preparation = import_module("src.01_prepare_data")
 
 
 def small_dataset(n_classes, include_category=True):
@@ -28,6 +29,44 @@ def small_dataset(n_classes, include_category=True):
 
 
 class BenchmarkTests(unittest.TestCase):
+    def test_dry_bean_prepares_and_runs_without_legacy_emg(self):
+        dataset_names = {spec.name for spec in preparation.DATASET_SPECS}
+        self.assertEqual(len(dataset_names), 10)
+        self.assertNotIn("04_emg_gesture", dataset_names)
+        spec = next(spec for spec in preparation.DATASET_SPECS if spec.name == "04_dry_bean")
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            prepared_path = root / f"{spec.name}.csv.gz"
+            with patch.object(preparation, "PROCESSED_DIR", root):
+                metadata = preparation.prepare_single_dataset(spec)
+            prepared = pd.read_csv(prepared_path)
+            self.assertEqual(metadata["n_raw_rows"], 13_611)
+            self.assertEqual(prepared.shape, (13_543, 17))
+            self.assertEqual(metadata["n_numeric_features"], 16)
+            self.assertEqual(prepared["target"].nunique(), 7)
+            self.assertFalse(prepared.isna().any().any())
+            self.assertFalse(prepared.drop(columns="target").duplicated().any())
+
+            sample = preparation.stratified_subsample(prepared, 700, benchmark.RANDOM_STATE)
+            sample.to_csv(prepared_path, index=False)
+            legacy = root / "04_emg_gesture.csv.gz"
+            legacy.write_bytes(b"resultado preparado anteriormente")
+            metrics_path = root / "dry_bean_smoke.csv"
+            with (
+                patch.object(benchmark, "PROCESSED_DIR", root),
+                parallel_backend("threading"),
+                redirect_stdout(io.StringIO()),
+            ):
+                benchmark.run_benchmark(n_splits=2, results_path=metrics_path)
+            metrics = pd.read_csv(metrics_path)
+            self.assertEqual(legacy.read_bytes(), b"resultado preparado anteriormente")
+
+        self.assertEqual(set(metrics["dataset"]), {"04_dry_bean"})
+        expected = {(model, fold) for model in benchmark.MODEL_NAMES.values() for fold in (1, 2)}
+        self.assertEqual(len(metrics), len(expected))
+        self.assertEqual(set(metrics[["model", "fold"]].itertuples(index=False, name=None)), expected)
+        self.assertTrue(metrics["f1_macro"].between(0, 1).all())
+
     def test_stacking_fits_transformers_on_each_internal_training_fold(self):
         X, y = small_dataset(n_classes=2)
         splits = list(StratifiedKFold(n_splits=3).split(X, y))

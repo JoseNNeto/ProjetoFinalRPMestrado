@@ -5,7 +5,7 @@ Lê os datasets originais (prioritariamente de ``data/raw/``, com fallback para
 com vazamento de dados), aplica subamostragem estratificada para 20.000
 instâncias nas bases extensas e salva as versões padronizadas em
 ``data/processed/`` com a coluna alvo nomeada ``target``.
-Também gera ``results/dataset_metadata.csv`` com estatísticas resumidas.
+Também gera ``results/dataset_metadata_dry_bean.csv`` com estatísticas resumidas.
 """
 
 from __future__ import annotations
@@ -113,12 +113,12 @@ DATASET_SPECS: list[DatasetSpec] = [
         custom_clean=_clean_flight_delay,
     ),
     DatasetSpec(
-        name="04_emg_gesture",
-        display_name="EMG Gesture Recognition",
-        domain="Sinais Biomédicos",
-        filename="EMG-data.csv.gz",
-        target_col="class",
-        drop_cols=["time", "label"],
+        name="04_dry_bean",
+        display_name="Dry Bean",
+        domain="Agricultura / Morfologia",
+        filename="dry_bean.csv.gz",
+        target_col="Class",
+        custom_clean=pd.DataFrame.drop_duplicates,
     ),
     DatasetSpec(
         name="05_nasa_neo",
@@ -266,7 +266,7 @@ def main() -> None:
         )
 
     metadata_df = pd.DataFrame(metadata_rows)
-    meta_path = RESULTS_DIR / "dataset_metadata.csv"
+    meta_path = RESULTS_DIR / "dataset_metadata_dry_bean.csv"
     metadata_df.to_csv(meta_path, index=False)
     print(f"\nMetadados salvos em: {meta_path}")
 
