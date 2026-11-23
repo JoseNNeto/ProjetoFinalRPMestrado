@@ -1,19 +1,18 @@
 """Fase 4: Validação estatística (Friedman-Nemenyi), tabela de ranks e CD Diagram.
 
-Lê ``results/metrics_raw.csv``, calcula médias, desvios padrão e ranks por base,
+Lê ``results/metrics_raw_dry_bean.csv``, calcula médias, desvios padrão e ranks por base,
 executa o teste não-paramétrico de Friedman seguido pelo pós-teste de Nemenyi
-(Demšar, 2006) e gera:
-- ``results/summary_table.csv``
-- ``results/summary_table_formatted.csv``
-- ``results/nemenyi_pvalues.csv``
-- ``results/stats_summary.txt``
-- ``results/cd_diagram.png`` (300 DPI)
+(Demšar, 2006) e grava os artefatos em ``results/stats_dry_bean/``.
 """
 
 from __future__ import annotations
 
 import math
+from contextlib import ExitStack
+from importlib import import_module
+from itertools import product
 from pathlib import Path
+from typing import BinaryIO
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,9 +27,50 @@ except ImportError:  # Fallback analítico caso scikit-posthocs ainda não estej
 ALPHA = 0.05
 PRIMARY_METRIC = "f1_macro"
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-RESULTS_DIR = PROJECT_ROOT / "results"
-METRICS_PATH = RESULTS_DIR / "metrics_raw.csv"
+module_prefix = f"{__package__}." if __package__ else ""
+preparation = import_module(f"{module_prefix}01_prepare_data")
+benchmark = import_module(f"{module_prefix}02_run_benchmark")
+
+METRICS_PATH = benchmark.METRICS_PATH
+OUTPUT_DIR = benchmark.RESULTS_DIR / "stats_dry_bean"
+KEY_COLUMNS = ["dataset", "model", "fold"]
+METRIC_COLUMNS = [PRIMARY_METRIC, "balanced_accuracy", "fit_time"]
+
+
+def validate_metrics(raw_df: pd.DataFrame) -> pd.DataFrame:
+    """Confere a grade completa do protocolo antes de agregar os folds."""
+    required = KEY_COLUMNS + METRIC_COLUMNS
+    if "strategy" in raw_df or not set(required).issubset(raw_df):
+        raise ValueError("CSV de benchmark inválido. Colunas esperadas: " + ", ".join(required))
+
+    data = raw_df[required].copy()
+    numeric = ["fold", *METRIC_COLUMNS]
+    data[numeric] = data[numeric].apply(pd.to_numeric, errors="coerce")
+    if (
+        not np.isfinite(data[METRIC_COLUMNS].to_numpy(dtype=float, na_value=np.nan)).all()
+        or not data[PRIMARY_METRIC].between(0, 1).all()
+        or not data["balanced_accuracy"].between(0, 1).all()
+        or not data["fit_time"].ge(0).all()
+    ):
+        raise ValueError("Métricas inválidas: use escores finitos em [0, 1] e tempos finitos não negativos.")
+
+    folds = range(1, benchmark.N_SPLITS + 1)
+    if not data["fold"].isin(folds).all() or data[["dataset", "model"]].isna().any().any():
+        raise ValueError("Identificação de base, modelo ou fold inválida.")
+    if data.duplicated(KEY_COLUMNS).any():
+        raise ValueError("Há combinações duplicadas de base, modelo e fold.")
+
+    datasets = {spec.name for spec in preparation.DATASET_SPECS}
+    models = set(benchmark.MODEL_NAMES.values())
+    expected = set(product(datasets, models, folds))
+    observed = set(data[KEY_COLUMNS].itertuples(index=False, name=None))
+    if observed != expected:
+        raise ValueError(
+            "Grade incompatível com o protocolo dry-bean: "
+            f"{len(data)} de {len(expected)} registros esperados, "
+            f"{len(expected - observed)} combinações faltantes e {len(observed - expected)} inesperadas."
+        )
+    return data
 
 
 def compute_summary_tables(raw_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -130,7 +170,7 @@ def plot_cd_diagram(
     cd: float,
     chi2_stat: float,
     friedman_p: float,
-    out_path: Path,
+    out_path: Path | BinaryIO,
     alpha: float = ALPHA,
 ) -> None:
     """Gera o Diagrama de Diferença Crítica de Demšar (2006) em alta resolução (300 DPI)."""
@@ -231,40 +271,23 @@ def plot_cd_diagram(
         pad=10,
     )
 
-    fig.savefig(out_path, dpi=300, bbox_inches="tight", facecolor="white")
-    plt.close(fig)
+    try:
+        fig.savefig(out_path, format="png", dpi=300, bbox_inches="tight", facecolor="white")
+    finally:
+        plt.close(fig)
 
 
 def main() -> None:
     """Executa toda a análise estatística e salva tabelas, relatório e gráfico."""
-    if not METRICS_PATH.exists():
-        raise FileNotFoundError(
-            f"Arquivo {METRICS_PATH} não encontrado. Execute primeiro: python src/02_run_benchmark.py"
-        )
-
-    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     raw_df = pd.read_csv(METRICS_PATH)
-
-    summary_df, f1_pivot, formatted_df = compute_summary_tables(raw_df)
-    summary_df.to_csv(RESULTS_DIR / "summary_table.csv", index=False)
-    formatted_df.to_csv(RESULTS_DIR / "summary_table_formatted.csv", index=False)
+    if not isinstance(raw_df.index, pd.RangeIndex):
+        raise ValueError("O CSV contém campos além das colunas declaradas.")
+    summary_df, f1_pivot, formatted_df = compute_summary_tables(validate_metrics(raw_df))
 
     chi2_stat, friedman_p = friedmanchisquare(
         *[f1_pivot[col].values for col in f1_pivot.columns]
     )
     avg_ranks, pvalues, cd = compute_nemenyi_and_cd(f1_pivot, alpha=ALPHA)
-    pvalues.to_csv(RESULTS_DIR / "nemenyi_pvalues.csv")
-
-    cd_path = RESULTS_DIR / "cd_diagram.png"
-    plot_cd_diagram(
-        avg_ranks=avg_ranks,
-        pvalues=pvalues,
-        cd=cd,
-        chi2_stat=float(chi2_stat),
-        friedman_p=float(friedman_p),
-        out_path=cd_path,
-        alpha=ALPHA,
-    )
 
     n_datasets, k_models = f1_pivot.shape
     decision = (
@@ -274,6 +297,8 @@ def main() -> None:
     )
     report_lines = [
         "=== Análise Estatística: Teste de Friedman + Pós-teste de Nemenyi ===",
+        "Protocolo              : dry-bean",
+        f"CSV de entrada         : {METRICS_PATH}",
         f"Métrica avaliada       : {PRIMARY_METRIC}",
         f"Bases (N)              : {n_datasets}",
         f"Modelos (k)            : {k_models}",
@@ -290,11 +315,35 @@ def main() -> None:
         pvalues.round(6).to_string(),
     ]
     report_text = "\n".join(report_lines)
-    (RESULTS_DIR / "stats_summary.txt").write_text(report_text, encoding="utf-8")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    with ExitStack() as rollback, ExitStack() as files:
+        outputs = {}
+        for filename in ("summary_table.csv", "summary_table_formatted.csv", "nemenyi_pvalues.csv",
+                         "stats_summary.txt", "cd_diagram.png"):
+            path = OUTPUT_DIR / filename
+            try:
+                outputs[filename] = files.enter_context(path.open("xb"))
+            except FileExistsError:
+                raise FileExistsError(f"O arquivo {path} já existe.") from None
+            rollback.callback(path.unlink)
+
+        summary_df.to_csv(outputs["summary_table.csv"], index=False)
+        formatted_df.to_csv(outputs["summary_table_formatted.csv"], index=False)
+        pvalues.to_csv(outputs["nemenyi_pvalues.csv"])
+        outputs["stats_summary.txt"].write(report_text.encode("utf-8"))
+        plot_cd_diagram(
+            avg_ranks, pvalues, cd, float(chi2_stat), float(friedman_p),
+            outputs["cd_diagram.png"], alpha=ALPHA,
+        )
+        files.close()
+        rollback.pop_all()
 
     print(report_text)
-    print(f"\nArtefatos salvos em: {RESULTS_DIR}")
+    print(f"\nArtefatos salvos em: {OUTPUT_DIR}")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (ValueError, FileNotFoundError, FileExistsError) as error:
+        raise SystemExit(str(error)) from None

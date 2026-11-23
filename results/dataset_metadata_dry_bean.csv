@@ -1,0 +1,11 @@
+dataset,display_name,domain,source_file,n_raw_rows,n_used_rows,n_features,n_numeric_features,n_categorical_features,n_classes,majority_class_pct,minority_class_pct,imbalance_ratio
+01_card_transdata,Card Transdata,Finanças / Fraude,card_transdata.csv.gz,1000000,20000,7,7,0,2,91.26,8.74,10.44
+02_smoking_drinking,Smoking & Drinking,Saúde / Biometria,smoking_driking_dataset_Ver01.csv.gz,991346,20000,23,22,1,2,50.02,49.98,1.0
+03_flight_delay,Flight Delay Prediction,Aviação / Logística,flight_data_2018_to_2022.csv.gz,563737,20000,12,9,3,2,80.55,19.45,4.14
+04_dry_bean,Dry Bean,Agricultura / Morfologia,dry_bean.csv.gz,13611,13543,16,16,0,7,26.18,3.85,6.79
+05_nasa_neo,NASA Nearest Earth Objects,Astrofísica / Órbita,nearest-earth-objects(1910-2024).csv.gz,338199,20000,5,5,0,2,87.24,12.76,6.84
+06_sdss_dr16,Sloan Digital Sky Survey DR16,Astronomia,sdss-IV-dr16-70k (1).csv.gz,70000,20000,8,8,0,3,70.98,9.74,7.29
+07_ai4i_2020,AI4I 2020 Maintenance,Indústria / Sensores,ai4i2020.csv.gz,10000,10000,6,5,1,2,96.61,3.39,28.5
+08_electrical_grid,Electrical Grid Stability,Energia / Sistemas,Data_for_UCI_named.csv.gz,10000,10000,12,12,0,2,63.8,36.2,1.76
+09_steel_plates_faults,Steel Plates Faults,Indústria / Metalurgia,steel_plates_faults_original_dataset.csv.gz,1941,1941,27,27,0,7,34.67,2.83,12.24
+10_telco_churn,Telco Customer Churn,Negócios / Telecom,WA_Fn-UseC_-Telco-Customer-Churn.csv.gz,7043,7043,19,4,15,2,73.46,26.54,2.77
