@@ -43,24 +43,41 @@ def _fuse_probabilities(probabilities, confidences, coefficients):
     return np.einsum("ni,nic->nc", weights, probabilities)
 
 
-def _optimize_weights(probabilities, y, *, n_particles, n_iterations, bound, rng):
+def _out_of_fold_probabilities(estimators, X, y, folds):
+    return np.stack(
+        [
+            cross_val_predict(estimator, X, y, cv=folds, method="predict_proba")
+            for estimator in estimators
+        ],
+        axis=1,
+    )
+
+
+def _optimize_weights(probabilities, y, *, n_particles, n_iterations, bound, rng, adaptive=True):
     """Otimiza (F1 Macro, -norma quadrática média) em ordem lexicográfica."""
     n_experts = probabilities.shape[1]
     n_classes = probabilities.shape[2]
-    confidences = _entropy_confidence(probabilities)
+    confidences = (
+        _entropy_confidence(probabilities) if adaptive else np.zeros(probabilities.shape[:2])
+    )
     true_counts = np.bincount(y, minlength=n_classes)
 
+    def as_coefficients(position):
+        if adaptive:
+            return position.reshape(2, n_experts)
+        return np.stack((position, np.zeros_like(position)))
+
     def score(position):
-        coefficients = position.reshape(2, n_experts)
+        coefficients = as_coefficients(position)
         predicted = _fuse_probabilities(probabilities, confidences, coefficients).argmax(axis=1)
         predicted_counts = np.bincount(predicted, minlength=n_classes)
         true_positives = np.bincount(y[predicted == y], minlength=n_classes)
         macro_f1 = np.mean(2 * true_positives / (true_counts + predicted_counts))
         return macro_f1, -np.mean(position**2)
 
-    lower = np.repeat([-bound, 0.0], n_experts)
-    upper = np.full(2 * n_experts, bound)
-    shape = (n_particles, 2 * n_experts)
+    lower = np.repeat([-bound, 0.0] if adaptive else [-bound], n_experts)
+    upper = np.full(lower.size, bound)
+    shape = (n_particles, lower.size)
     positions = rng.uniform(lower, upper, size=shape)
     positions[0] = 0  # Inclui a média uniforme entre as soluções candidatas.
     initial_speed = 0.1 * (upper - lower)
@@ -83,7 +100,7 @@ def _optimize_weights(probabilities, y, *, n_particles, n_iterations, bound, rng
                 personal_scores[index] = candidate_score
 
     winner = max(range(n_particles), key=personal_scores.__getitem__)
-    return personal_best[winner].reshape(2, n_experts), personal_scores[winner][0]
+    return as_coefficients(personal_best[winner]), personal_scores[winner][0]
 
 
 class PSOAdaptiveFusionClassifier(ClassifierMixin, BaseEstimator):
@@ -152,13 +169,7 @@ class PSOAdaptiveFusionClassifier(ClassifierMixin, BaseEstimator):
             raise ValueError("Cada fold interno precisa de pelo menos 5 amostras de treino para o k-NN.")
 
         # O treino de cada clone inclui seu pré-processador, dentro do fold.
-        oof_probabilities = np.stack(
-            [
-                cross_val_predict(estimator, X, encoded_y, cv=folds, method="predict_proba")
-                for estimator in estimators
-            ],
-            axis=1,
-        )
+        oof_probabilities = _out_of_fold_probabilities(estimators, X, encoded_y, folds)
         coefficients, oof_f1 = _optimize_weights(
             oof_probabilities,
             encoded_y,
