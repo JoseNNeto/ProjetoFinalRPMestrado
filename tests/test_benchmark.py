@@ -1,7 +1,7 @@
-import importlib.util
 import io
 from collections import Counter
 from contextlib import redirect_stdout
+from importlib import import_module
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -14,10 +14,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import StratifiedKFold
 
 
-benchmark_path = Path(__file__).resolve().parents[1] / "src" / "02_run_benchmark.py"
-spec = importlib.util.spec_from_file_location("run_benchmark", benchmark_path)
-benchmark = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(benchmark)
+benchmark = import_module("src.02_run_benchmark")
 
 
 def small_dataset(n_classes, include_category=True):
@@ -95,13 +92,11 @@ class BenchmarkTests(unittest.TestCase):
             processed_dir = Path(directory) / "processed"
             processed_dir.mkdir()
             X.assign(target=y).to_csv(processed_dir / "small.csv.gz", index=False)
-            results_dir = Path(directory) / "results"
-            metrics_path = results_dir / "metrics_raw.csv"
+            metrics_path = Path(directory) / "results" / "metrics_raw_refactored.csv"
             with (
                 patch.multiple(
                     benchmark,
                     PROCESSED_DIR=processed_dir,
-                    RESULTS_DIR=results_dir,
                     METRICS_PATH=metrics_path,
                 ),
                 parallel_backend("threading"),
@@ -110,7 +105,7 @@ class BenchmarkTests(unittest.TestCase):
                 benchmark.run_benchmark()
             metrics = pd.read_csv(metrics_path)
 
-        models = ("SVM", "KNN", "Random Forest", "MLP", "Hibrido (Stacking)")
+        models = ("SVM", "KNN", "Random Forest", "MLP", "Hibrido (Stacking)", "Hibrido (PSO Adaptativo)")
         expected_runs = Counter(("small", model, fold) for model in models for fold in range(1, 6))
         self.assertEqual(
             Counter(metrics[["dataset", "model", "fold"]].itertuples(index=False, name=None)),
@@ -119,3 +114,39 @@ class BenchmarkTests(unittest.TestCase):
         self.assertTrue(metrics["f1_macro"].between(0, 1).all())
         self.assertTrue(metrics["balanced_accuracy"].between(0, 1).all())
         self.assertTrue(metrics["fit_time"].ge(0).all())
+
+    def test_pso_only_uses_external_training_in_two_folds(self):
+        X, y = small_dataset(n_classes=2)
+        splits = list(StratifiedKFold(n_splits=2, shuffle=True, random_state=42).split(X, y))
+        original_fit = benchmark.PSOAdaptiveFusionClassifier.fit
+        original_predict = benchmark.PSOAdaptiveFusionClassifier.predict
+        train_indices = []
+        test_indices = []
+
+        def record_fit(estimator, train, labels):
+            train_indices.append(tuple(train.index))
+            return original_fit(estimator, train, labels)
+
+        def record_predict(estimator, test):
+            test_indices.append(tuple(test.index))
+            return original_predict(estimator, test)
+
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            dataset_path = root / "small.csv.gz"
+            X.assign(target=y).to_csv(dataset_path, index=False)
+            metrics_path = root / "custom" / "smoke.csv"
+            options = dict(dataset_filter=["small"], n_splits=2, results_path=metrics_path)
+            with (
+                patch.object(benchmark, "PROCESSED_DIR", root),
+                patch.object(benchmark.PSOAdaptiveFusionClassifier, "fit", record_fit),
+                patch.object(benchmark.PSOAdaptiveFusionClassifier, "predict", record_predict),
+                redirect_stdout(io.StringIO()),
+            ):
+                benchmark.run_benchmark(model_filter=["pso"], **options)
+            metrics = pd.read_csv(metrics_path)
+
+        self.assertEqual(train_indices, [tuple(train) for train, _ in splits])
+        self.assertEqual(test_indices, [tuple(test) for _, test in splits])
+        self.assertEqual(metrics["model"].tolist(), ["Hibrido (PSO Adaptativo)"] * 2)
+        self.assertEqual(metrics["fold"].tolist(), [1, 2])

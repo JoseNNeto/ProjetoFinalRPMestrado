@@ -1,9 +1,8 @@
 """Fase 2, 3 e 4: Benchmark com pré-processamento por fold e 5-Fold Stratified CV.
 
-Lê as bases preparadas em ``data/processed/*.csv.gz``, executa os 5 modelos
-(SVM, KNN, Random Forest, MLP e Modelo Híbrido Stacking) sobre
+Lê as bases preparadas em ``data/processed/*.csv.gz`` e executa os 6 modelos sobre
 ``StratifiedKFold(n_splits=5, shuffle=True, random_state=42)`` e grava
-``results/metrics_raw.csv`` com ``f1_macro``, ``balanced_accuracy`` e ``fit_time``.
+``results/metrics_raw_refactored.csv`` com ``f1_macro``, ``balanced_accuracy`` e ``fit_time``.
 """
 
 from __future__ import annotations
@@ -26,13 +25,26 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from sklearn.svm import SVC
 
+if __package__:
+    from .pso_adaptive_fusion import PSOAdaptiveFusionClassifier
+else:
+    from pso_adaptive_fusion import PSOAdaptiveFusionClassifier
+
 RANDOM_STATE = 42
 N_SPLITS = 5
+MODEL_NAMES = {
+    "svm": "SVM",
+    "knn": "KNN",
+    "rf": "Random Forest",
+    "mlp": "MLP",
+    "stacking": "Hibrido (Stacking)",
+    "pso": "Hibrido (PSO Adaptativo)",
+}
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 RESULTS_DIR = PROJECT_ROOT / "results"
-METRICS_PATH = RESULTS_DIR / "metrics_raw.csv"
+METRICS_PATH = RESULTS_DIR / "metrics_raw_refactored.csv"
 
 
 def build_preprocessor(X: pd.DataFrame) -> ColumnTransformer:
@@ -63,7 +75,7 @@ def build_preprocessor(X: pd.DataFrame) -> ColumnTransformer:
 
 
 def build_models(X: pd.DataFrame, random_state: int = RANDOM_STATE) -> dict[str, BaseEstimator]:
-    """Instancia os 5 modelos com pré-processamento ajustado em cada pipeline."""
+    """Instancia os 6 modelos com pré-processamento ajustado em cada pipeline."""
     classifiers = {
         "SVM": SVC(kernel="rbf", probability=True, random_state=random_state),
         "KNN": KNeighborsClassifier(n_neighbors=5, n_jobs=-1),
@@ -84,7 +96,7 @@ def build_models(X: pd.DataFrame, random_state: int = RANDOM_STATE) -> dict[str,
         for name, classifier in classifiers.items()
     }
     # O Stacking clona e ajusta cada pipeline sobre o treino de cada fold interno.
-    models["Hibrido (Stacking)"] = StackingClassifier(
+    models[MODEL_NAMES["stacking"]] = StackingClassifier(
         estimators=[
             ("svm", clone(models["SVM"])),
             ("rf", clone(models["Random Forest"])),
@@ -99,6 +111,9 @@ def build_models(X: pd.DataFrame, random_state: int = RANDOM_STATE) -> dict[str,
         cv=3,
         stack_method="predict_proba",
         n_jobs=-1,
+    )
+    models[MODEL_NAMES["pso"]] = PSOAdaptiveFusionClassifier(
+        preprocessor=build_preprocessor(X), random_state=random_state
     )
 
     return models
@@ -125,31 +140,42 @@ def run_benchmark(
     dataset_filter: list[str] | None = None,
     n_splits: int = N_SPLITS,
     resume: bool = False,
+    *,
+    model_filter: list[str] | None = None,
+    results_path: Path | None = None,
 ) -> None:
-    """Executa a validação cruzada estratificada em todas as bases e modelos."""
-    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    """Executa a validação cruzada estratificada nas bases e modelos selecionados."""
+    metrics_path = (Path(results_path) if results_path is not None else METRICS_PATH).resolve()
+    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=RANDOM_STATE)
 
-    dataset_files = sorted(PROCESSED_DIR.glob("*.csv.gz"))
-    if not dataset_files:
+    dataset_paths = {path.name[:-7]: path for path in sorted(PROCESSED_DIR.glob("*.csv.gz"))}
+    if not dataset_paths:
         raise FileNotFoundError(
             f"Nenhum arquivo .csv.gz encontrado em {PROCESSED_DIR}. "
             "Execute primeiro: python src/01_prepare_data.py"
         )
 
-    if dataset_filter:
-        allowed = set(dataset_filter)
-        dataset_files = [
-            path for path in dataset_files if path.name[:-7] in allowed or path.stem in allowed
-        ]
+    selected_datasets = (
+        {name.removesuffix(".gz").removesuffix(".csv") for name in dataset_filter}
+        if dataset_filter else set(dataset_paths)
+    )
+    if unknown_datasets := selected_datasets.difference(dataset_paths):
+        raise ValueError(f"Bases desconhecidas: {', '.join(sorted(unknown_datasets))}.")
+    selected_models = set(model_filter or MODEL_NAMES)
+    if unknown_models := selected_models.difference(MODEL_NAMES):
+        raise ValueError(f"Modelos desconhecidos: {', '.join(sorted(unknown_models))}.")
+    model_names = [name for alias, name in MODEL_NAMES.items() if alias in selected_models]
 
-    if not resume and METRICS_PATH.exists():
-        METRICS_PATH.unlink()
+    metrics_path.parent.mkdir(parents=True, exist_ok=True)
+    if not resume and metrics_path.exists():
+        raise FileExistsError(
+            f"O CSV já existe: {metrics_path}. Use --resume ou outro --results-path."
+        )
+    completed = load_completed_keys(metrics_path) if resume else set()
 
-    completed = load_completed_keys(METRICS_PATH) if resume else set()
-    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=RANDOM_STATE)
-
-    for dataset_path in dataset_files:
-        dataset_name = dataset_path.name[:-7]  # remove ".csv.gz"
+    for dataset_name, dataset_path in dataset_paths.items():
+        if dataset_name not in selected_datasets:
+            continue
         df = pd.read_csv(dataset_path)
         X = df.drop(columns=["target"])
         y = LabelEncoder().fit_transform(df["target"])
@@ -161,11 +187,12 @@ def run_benchmark(
             y_train, y_test = y[train_idx], y[test_idx]
 
             models = build_models(X_train, random_state=RANDOM_STATE)
-            for model_name, model in models.items():
+            for model_name in model_names:
                 if (dataset_name, model_name, fold_idx) in completed:
                     print(f"  [skip] fold {fold_idx}/{n_splits} | {model_name}")
                     continue
 
+                model = models[model_name]
                 t_start = time.perf_counter()
                 model.fit(X_train, y_train)
                 fit_time = time.perf_counter() - t_start
@@ -182,13 +209,13 @@ def run_benchmark(
                     "balanced_accuracy": round(float(bal_acc), 6),
                     "fit_time": round(float(fit_time), 4),
                 }
-                append_metric_row(METRICS_PATH, row)
+                append_metric_row(metrics_path, row)
                 print(
                     f"  fold {fold_idx}/{n_splits} | {model_name:18s} | "
                     f"F1={f1:.4f} | BalAcc={bal_acc:.4f} | t={fit_time:.2f}s"
                 )
 
-    print(f"\nMétricas brutas salvas em: {METRICS_PATH}")
+    print(f"\nMétricas brutas salvas em: {metrics_path}")
 
 
 def parse_args() -> argparse.Namespace:
@@ -207,13 +234,31 @@ def parse_args() -> argparse.Namespace:
         help="Número de folds do StratifiedKFold (padrão: 5).",
     )
     parser.add_argument(
+        "--models",
+        nargs="+",
+        choices=MODEL_NAMES,
+        help="Modelos a executar (padrão: todos).",
+    )
+    parser.add_argument(
+        "--results-path",
+        type=Path,
+        default=METRICS_PATH,
+        help="CSV de saída (padrão: results/metrics_raw_refactored.csv).",
+    )
+    parser.add_argument(
         "--resume",
         action="store_true",
-        help="Continua a partir do results/metrics_raw.csv existente.",
+        help="Retoma o CSV e pula combinações de base, modelo e fold já gravadas.",
     )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    run_benchmark(dataset_filter=args.datasets, n_splits=args.n_splits, resume=args.resume)
+    run_benchmark(
+        dataset_filter=args.datasets,
+        n_splits=args.n_splits,
+        resume=args.resume,
+        model_filter=args.models,
+        results_path=args.results_path,
+    )
