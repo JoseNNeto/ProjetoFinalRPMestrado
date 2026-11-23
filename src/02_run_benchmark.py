@@ -1,4 +1,4 @@
-"""Fase 2, 3 e 4: Benchmark com Pipeline universal (zero data leakage) e 5-Fold Stratified CV.
+"""Fase 2, 3 e 4: Benchmark com pré-processamento por fold e 5-Fold Stratified CV.
 
 Lê as bases preparadas em ``data/processed/*.csv.gz``, executa os 5 modelos
 (SVM, KNN, Random Forest, MLP e Modelo Híbrido Stacking) sobre
@@ -14,7 +14,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, clone
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, StackingClassifier
 from sklearn.impute import SimpleImputer
@@ -62,27 +62,9 @@ def build_preprocessor(X: pd.DataFrame) -> ColumnTransformer:
     return ColumnTransformer(transformers=transformers, remainder="drop")
 
 
-def build_models(random_state: int = RANDOM_STATE) -> dict[str, BaseEstimator]:
-    """Instancia os 5 classificadores de famílias distintas (incluindo o Híbrido)."""
-    stacking_estimators = [
-        ("svm", SVC(kernel="rbf", probability=True, random_state=random_state)),
-        ("rf", RandomForestClassifier(n_estimators=100, random_state=random_state, n_jobs=-1)),
-        ("knn", KNeighborsClassifier(n_neighbors=5, n_jobs=-1)),
-    ]
-    hybrid_model = StackingClassifier(
-        estimators=stacking_estimators,
-        final_estimator=MLPClassifier(
-            hidden_layer_sizes=(64,),
-            early_stopping=True,
-            max_iter=300,
-            random_state=random_state,
-        ),
-        cv=3,
-        stack_method="predict_proba",
-        n_jobs=-1,
-    )
-
-    return {
+def build_models(X: pd.DataFrame, random_state: int = RANDOM_STATE) -> dict[str, BaseEstimator]:
+    """Instancia os 5 modelos com pré-processamento ajustado em cada pipeline."""
+    classifiers = {
         "SVM": SVC(kernel="rbf", probability=True, random_state=random_state),
         "KNN": KNeighborsClassifier(n_neighbors=5, n_jobs=-1),
         "Random Forest": RandomForestClassifier(
@@ -94,8 +76,32 @@ def build_models(random_state: int = RANDOM_STATE) -> dict[str, BaseEstimator]:
             max_iter=300,
             random_state=random_state,
         ),
-        "Hibrido (Stacking)": hybrid_model,
     }
+    models: dict[str, BaseEstimator] = {
+        name: Pipeline(
+            steps=[("preprocessor", build_preprocessor(X)), ("classifier", classifier)]
+        )
+        for name, classifier in classifiers.items()
+    }
+    # O Stacking clona e ajusta cada pipeline sobre o treino de cada fold interno.
+    models["Hibrido (Stacking)"] = StackingClassifier(
+        estimators=[
+            ("svm", clone(models["SVM"])),
+            ("rf", clone(models["Random Forest"])),
+            ("knn", clone(models["KNN"])),
+        ],
+        final_estimator=MLPClassifier(
+            hidden_layer_sizes=(64,),
+            early_stopping=True,
+            max_iter=300,
+            random_state=random_state,
+        ),
+        cv=3,
+        stack_method="predict_proba",
+        n_jobs=-1,
+    )
+
+    return models
 
 
 def load_completed_keys(metrics_path: Path) -> set[tuple[str, str, int]]:
@@ -154,25 +160,17 @@ def run_benchmark(
             X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
             y_train, y_test = y[train_idx], y[test_idx]
 
-            # Modelos frescos a cada fold; pré-processador ajustado somente no fold de treino.
-            models = build_models(random_state=RANDOM_STATE)
-            for model_name, estimator in models.items():
+            models = build_models(X_train, random_state=RANDOM_STATE)
+            for model_name, model in models.items():
                 if (dataset_name, model_name, fold_idx) in completed:
                     print(f"  [skip] fold {fold_idx}/{n_splits} | {model_name}")
                     continue
 
-                pipeline = Pipeline(
-                    steps=[
-                        ("preprocessor", build_preprocessor(X_train)),
-                        ("classifier", estimator),
-                    ]
-                )
-
                 t_start = time.perf_counter()
-                pipeline.fit(X_train, y_train)
+                model.fit(X_train, y_train)
                 fit_time = time.perf_counter() - t_start
 
-                y_pred = pipeline.predict(X_test)
+                y_pred = model.predict(X_test)
                 f1 = f1_score(y_test, y_pred, average="macro")
                 bal_acc = balanced_accuracy_score(y_test, y_pred)
 
